@@ -228,6 +228,9 @@ client.prototype.handleMessage = function handleMessage(message) {
 
         // https://github.com/justintv/Twitch-API/blob/master/chat/capabilities.md#notice
         case 'NOTICE':
+          this.log.info(`[${channel}] ${msg}`);
+          this.emit('notice', channel, msgid, msg);
+
           switch (msgid) {
             // This room is now in subscribers-only mode.
             case 'subs_on':
@@ -334,10 +337,7 @@ client.prototype.handleMessage = function handleMessage(message) {
 
             // Channel is suspended..
             case 'msg_channel_suspended':
-              this.emits(
-                ['notice', '_promiseJoin'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseJoin', msgid);
               break;
 
             // Ban command failed..
@@ -348,127 +348,75 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'bad_ban_self':
             case 'bad_ban_staff':
             case 'usage_ban':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseBan'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseBan', msgid);
               break;
 
             // Ban command success..
             case 'ban_success':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseBan'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseBan', null);
               break;
 
             // Clear command failed..
             case 'usage_clear':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseClear'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseClear', msgid);
               break;
 
             // Mods command failed..
             case 'usage_mods':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseMods'],
-                [[channel, msgid, msg], [msgid, []]],
-              );
+              this.emits('_promiseMods', msgid);
               break;
 
             // Mod command success..
             case 'mod_success':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseMod'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseMod', null);
               break;
 
             // Mod command failed..
             case 'usage_mod':
             case 'bad_mod_banned':
             case 'bad_mod_mod':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseMod'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseMod', msgid);
               break;
 
             // Unmod command success..
             case 'unmod_success':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseUnmod'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseUnmod', null);
               break;
 
             // Unmod command failed..
             case 'usage_unmod':
             case 'bad_unmod_mod':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseUnmod'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseUnmod', msgid);
               break;
 
             // Color command success..
             case 'color_changed':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseColor'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseColor', null);
               break;
 
             // Color command failed..
             case 'usage_color':
             case 'turbo_only_color':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseColor'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseColor', msgid);
               break;
 
             // Commercial command success..
             case 'commercial_success':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseCommercial'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseCommercial', null);
               break;
 
             // Commercial command failed..
             case 'usage_commercial':
             case 'bad_commercial_error':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseCommercial'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseCommercial', msgid);
               break;
 
             // Host command success..
             case 'hosts_remaining': {
-              this.log.info(`[${channel}] ${msg}`);
               const remainingHost = !Number.isNaN(msg.charAt(0))
                 ? msg.charAt(0)
                 : 0;
-              this.emits(
-                ['notice', '_promiseHost'],
-                [[channel, msgid, msg], [null, ~~remainingHost]],
-              );
+              this.emits('_promiseHost', null, ~~remainingHost);
               break;
             }
 
@@ -477,98 +425,58 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'bad_host_rate_exceeded':
             case 'bad_host_error':
             case 'usage_host':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseHost'],
-                [[channel, msgid, msg], [msgid, null]],
-              );
+              this.emits('_promiseHost', msgid, null);
               break;
 
             // r9kbeta command failed..
             case 'already_r9k_on':
             case 'usage_r9k_on':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseR9kbeta'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseR9kbeta', msgid);
               break;
 
             // r9kbetaoff command failed..
             case 'already_r9k_off':
             case 'usage_r9k_off':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseR9kbetaoff'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseR9kbetaoff', msgid);
               break;
 
             // Timeout command success..
             case 'timeout_success':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseTimeout'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseTimeout', null);
               break;
 
             // Subscribersoff command failed..
             case 'already_subs_off':
             case 'usage_subs_off':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseSubscribersoff'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseSubscribersoff', msgid);
               break;
 
             // Subscribers command failed..
             case 'already_subs_on':
             case 'usage_subs_on':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseSubscribers'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseSubscribers', msgid);
               break;
 
             // Emoteonlyoff command failed..
             case 'already_emote_only_off':
             case 'usage_emote_only_off':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseEmoteonlyoff'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseEmoteonlyoff', msgid);
               break;
 
             // Emoteonly command failed..
             case 'already_emote_only_on':
             case 'usage_emote_only_on':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseEmoteonly'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseEmoteonly', msgid);
               break;
 
             // Slow command failed..
             case 'usage_slow_on':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseSlow'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseSlow', msgid);
               break;
 
             // Slowoff command failed..
             case 'usage_slow_off':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseSlowoff'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseSlowoff', msgid);
               break;
 
             // Timeout command failed..
@@ -579,42 +487,26 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'bad_timeout_global_mod':
             case 'bad_timeout_self':
             case 'bad_timeout_staff':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseTimeout'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseTimeout', msgid);
               break;
 
             // Unban command success..
             // Unban can also be used to cancel an active timeout.
             case 'untimeout_success':
             case 'unban_success':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseUnban'],
-                [[channel, msgid, msg], [null]],
-              );
+              this.emits('_promiseUnban', null);
               break;
 
             // Unban command failed..
             case 'usage_unban':
             case 'bad_unban_no_ban':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseUnban'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseUnban', msgid);
               break;
 
             // Unhost command failed..
             case 'usage_unhost':
             case 'not_hosting':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseUnhost'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseUnhost', msgid);
               break;
 
             // Whisper command failed..
@@ -623,20 +515,14 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'whisper_limit_per_min':
             case 'whisper_limit_per_sec':
             case 'whisper_restricted_recipient':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emits(
-                ['notice', '_promiseWhisper'],
-                [[channel, msgid, msg], [msgid]],
-              );
+              this.emits('_promiseWhisper', msgid);
               break;
 
             // Permission error..
             case 'no_permission':
             case 'msg_banned':
-              this.log.info(`[${channel}] ${msg}`);
               this.emits(
                 [
-                  'notice',
                   '_promiseBan',
                   '_promiseClear',
                   '_promiseUnban',
@@ -659,7 +545,6 @@ client.prototype.handleMessage = function handleMessage(message) {
                   '_promiseEmoteonlyoff',
                 ],
                 [
-                  [channel, msgid, msg],
                   [msgid],
                   [msgid],
                   [msgid],
@@ -686,35 +571,11 @@ client.prototype.handleMessage = function handleMessage(message) {
 
             // Unrecognized command..
             case 'unrecognized_cmd':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emit('notice', channel, msgid, msg);
-
               if (msg.split(' ').splice(-1)[0] === '/w') {
                 this.log.warn(
                   'You must be connected to a group server to send or receive whispers.',
                 );
               }
-              break;
-
-            // Send the following msg-ids to the notice event listener..
-            case 'cmds_available':
-            case 'host_target_went_offline':
-            case 'msg_censored_broadcaster':
-            case 'msg_duplicate':
-            case 'msg_emoteonly':
-            case 'msg_followersonly':
-            case 'msg_verified_email':
-            case 'msg_ratelimit':
-            case 'msg_subsonly':
-            case 'msg_timedout':
-            case 'no_help':
-            case 'raid_notice_restricted_chat':
-            case 'unraid_error_no_active_raid':
-            case 'usage_disconnect':
-            case 'usage_help':
-            case 'usage_me':
-              this.log.info(`[${channel}] ${msg}`);
-              this.emit('notice', channel, msgid, msg);
               break;
 
             // Ignore this because we are already listening to HOSTTARGET..
@@ -724,11 +585,9 @@ client.prototype.handleMessage = function handleMessage(message) {
               break;
 
             case 'msg_rejected':
-              this.log.info(`[${channel}] ${msg}`);
               this.emit('automodinreview', { channel });
               break;
             case 'msg_rejected_mandatory':
-              this.log.info(`[${channel}] ${msg}`);
               this.emit('automodrejected', { channel });
               break;
 
@@ -758,13 +617,8 @@ client.prototype.handleMessage = function handleMessage(message) {
                 this.log.error(this.reason);
                 this.ws.close();
               } else {
-                this.log.warn(
-                  `Could not parse NOTICE from tmi.twitch.tv:\n${JSON.stringify(
-                    message,
-                    null,
-                    4,
-                  )}`,
-                );
+                this.log.info(`[${channel}] [unhandled] ${msg}`);
+                this.emit('other', channel, msgid, msg);
               }
               break;
           }
