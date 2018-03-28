@@ -337,7 +337,7 @@ client.prototype.handleMessage = function handleMessage(message) {
 
             // Channel is suspended..
             case 'msg_channel_suspended':
-              this.emits('_promiseJoin', msgid);
+              this.emit('_promiseJoin', msgid);
               break;
 
             // Ban command failed..
@@ -348,67 +348,67 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'bad_ban_self':
             case 'bad_ban_staff':
             case 'usage_ban':
-              this.emits('_promiseBan', msgid);
+              this.emit('_promiseBan', msgid);
               break;
 
             // Ban command success..
             case 'ban_success':
-              this.emits('_promiseBan', null);
+              this.emit('_promiseBan', null);
               break;
 
             // Clear command failed..
             case 'usage_clear':
-              this.emits('_promiseClear', msgid);
+              this.emit('_promiseClear', msgid);
               break;
 
             // Mods command failed..
             case 'usage_mods':
-              this.emits('_promiseMods', msgid);
+              this.emit('_promiseMods', msgid);
               break;
 
             // Mod command success..
             case 'mod_success':
-              this.emits('_promiseMod', null);
+              this.emit('_promiseMod', null);
               break;
 
             // Mod command failed..
             case 'usage_mod':
             case 'bad_mod_banned':
             case 'bad_mod_mod':
-              this.emits('_promiseMod', msgid);
+              this.emit('_promiseMod', msgid);
               break;
 
             // Unmod command success..
             case 'unmod_success':
-              this.emits('_promiseUnmod', null);
+              this.emit('_promiseUnmod', null);
               break;
 
             // Unmod command failed..
             case 'usage_unmod':
             case 'bad_unmod_mod':
-              this.emits('_promiseUnmod', msgid);
+              this.emit('_promiseUnmod', msgid);
               break;
 
             // Color command success..
             case 'color_changed':
-              this.emits('_promiseColor', null);
+              this.emit('_promiseColor', null);
               break;
 
             // Color command failed..
             case 'usage_color':
             case 'turbo_only_color':
-              this.emits('_promiseColor', msgid);
+              this.emit('_promiseColor', msgid);
               break;
 
             // Commercial command success..
             case 'commercial_success':
-              this.emits('_promiseCommercial', null);
+              this.emit('_promiseCommercial', null);
               break;
 
             // Commercial command failed..
             case 'usage_commercial':
             case 'bad_commercial_error':
-              this.emits('_promiseCommercial', msgid);
+              this.emit('_promiseCommercial', msgid);
               break;
 
             // Host command success..
@@ -416,7 +416,7 @@ client.prototype.handleMessage = function handleMessage(message) {
               const remainingHost = !Number.isNaN(msg.charAt(0))
                 ? msg.charAt(0)
                 : 0;
-              this.emits('_promiseHost', null, ~~remainingHost);
+              this.emit('_promiseHost', null, ~~remainingHost);
               break;
             }
 
@@ -425,58 +425,58 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'bad_host_rate_exceeded':
             case 'bad_host_error':
             case 'usage_host':
-              this.emits('_promiseHost', msgid, null);
+              this.emit('_promiseHost', msgid, null);
               break;
 
             // r9kbeta command failed..
             case 'already_r9k_on':
             case 'usage_r9k_on':
-              this.emits('_promiseR9kbeta', msgid);
+              this.emit('_promiseR9kbeta', msgid);
               break;
 
             // r9kbetaoff command failed..
             case 'already_r9k_off':
             case 'usage_r9k_off':
-              this.emits('_promiseR9kbetaoff', msgid);
+              this.emit('_promiseR9kbetaoff', msgid);
               break;
 
             // Timeout command success..
             case 'timeout_success':
-              this.emits('_promiseTimeout', null);
+              this.emit('_promiseTimeout', null);
               break;
 
             // Subscribersoff command failed..
             case 'already_subs_off':
             case 'usage_subs_off':
-              this.emits('_promiseSubscribersoff', msgid);
+              this.emit('_promiseSubscribersoff', msgid);
               break;
 
             // Subscribers command failed..
             case 'already_subs_on':
             case 'usage_subs_on':
-              this.emits('_promiseSubscribers', msgid);
+              this.emit('_promiseSubscribers', msgid);
               break;
 
             // Emoteonlyoff command failed..
             case 'already_emote_only_off':
             case 'usage_emote_only_off':
-              this.emits('_promiseEmoteonlyoff', msgid);
+              this.emit('_promiseEmoteonlyoff', msgid);
               break;
 
             // Emoteonly command failed..
             case 'already_emote_only_on':
             case 'usage_emote_only_on':
-              this.emits('_promiseEmoteonly', msgid);
+              this.emit('_promiseEmoteonly', msgid);
               break;
 
             // Slow command failed..
             case 'usage_slow_on':
-              this.emits('_promiseSlow', msgid);
+              this.emit('_promiseSlow', msgid);
               break;
 
             // Slowoff command failed..
             case 'usage_slow_off':
-              this.emits('_promiseSlowoff', msgid);
+              this.emit('_promiseSlowoff', msgid);
               break;
 
             // Timeout command failed..
@@ -487,26 +487,26 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'bad_timeout_global_mod':
             case 'bad_timeout_self':
             case 'bad_timeout_staff':
-              this.emits('_promiseTimeout', msgid);
+              this.emit('_promiseTimeout', msgid);
               break;
 
             // Unban command success..
             // Unban can also be used to cancel an active timeout.
             case 'untimeout_success':
             case 'unban_success':
-              this.emits('_promiseUnban', null);
+              this.emit('_promiseUnban', null);
               break;
 
             // Unban command failed..
             case 'usage_unban':
             case 'bad_unban_no_ban':
-              this.emits('_promiseUnban', msgid);
+              this.emit('_promiseUnban', msgid);
               break;
 
             // Unhost command failed..
             case 'usage_unhost':
             case 'not_hosting':
-              this.emits('_promiseUnhost', msgid);
+              this.emit('_promiseUnhost', msgid);
               break;
 
             // Whisper command failed..
@@ -515,7 +515,7 @@ client.prototype.handleMessage = function handleMessage(message) {
             case 'whisper_limit_per_min':
             case 'whisper_limit_per_sec':
             case 'whisper_restricted_recipient':
-              this.emits('_promiseWhisper', msgid);
+              this.emit('_promiseWhisper', msgid);
               break;
 
             // Permission error..

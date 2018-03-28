@@ -7,10 +7,6 @@ const tests = [
   ':tmi.twitch.tv 375',
   ':tmi.twitch.tv 376',
   ':tmi.twitch.tv CAP',
-  '@msg-id=host_on :tmi.twitch.tv NOTICE #schmoopiie',
-  '@msg-id=host_off :tmi.twitch.tv NOTICE #schmoopiie',
-  '@msg-id=slow_on :tmi.twitch.tv NOTICE #schmoopiie',
-  '@msg-id=slow_off :tmi.twitch.tv NOTICE #schmoopiie',
   ':schmoopiie!schmoopiie@schmoopiie.tmi.twitch.tv 366',
 ];
 
