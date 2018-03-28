@@ -618,7 +618,7 @@ client.prototype.handleMessage = function handleMessage(message) {
                 this.ws.close();
               } else {
                 this.log.info(`[${channel}] [unhandled] ${msg}`);
-                this.emit('other', channel, msgid, msg);
+                this.emit('unhandlednotice', channel, msgid, msg);
               }
               break;
           }
