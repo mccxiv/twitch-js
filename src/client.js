@@ -625,133 +625,115 @@ client.prototype.handleMessage = function handleMessage(message) {
           break;
 
         // Handle subanniversary / resub..
-        case 'USERNOTICE': {
-          if (msgid === 'resub') {
-            const username = message.tags['display-name'] || message.tags.login;
-            const plan = message.tags['msg-param-sub-plan'];
-            const planName = _.replaceAll(
-              _.get(message.tags['msg-param-sub-plan-name'], null),
-              {
-                '\\\\s': ' ',
-                '\\\\:': ';',
-                '\\\\\\\\': '\\',
-                '\\r': '\r',
-                '\\n': '\n',
-              },
-            );
-            const months = _.get(~~message.tags['msg-param-months'], null);
-            const prime = plan.includes('Prime');
-            const userstate = message.tags;
-
-            if (userstate) {
-              userstate['message-type'] = 'resub';
+        case 'USERNOTICE':
+          switch (msgid) {
+            case 'sub': {
+              const username =
+                message.tags['display-name'] || message.tags.login;
+              const plan = message.tags['msg-param-sub-plan'];
+              const planName = _.replaceAll(
+                _.get(message.tags['msg-param-sub-plan-name'], null),
+                {
+                  '\\\\s': ' ',
+                  '\\\\:': ';',
+                  '\\\\\\\\': '\\',
+                  '\\r': '\r',
+                  '\\n': '\n',
+                },
+              );
+              const prime = plan.includes('Prime');
+              const userstate = message.tags;
+              if (userstate) {
+                userstate['message-type'] = 'sub';
+              }
+              this.emit(
+                'subscription',
+                channel,
+                username,
+                { prime, plan, planName },
+                msg,
+                userstate,
+              );
+              break;
             }
 
-            this.emits(
-              ['resub', 'subanniversary'],
-              [
+            case 'resub': {
+              const username =
+                message.tags['display-name'] || message.tags.login;
+              const plan = message.tags['msg-param-sub-plan'];
+              const planName = _.replaceAll(
+                _.get(message.tags['msg-param-sub-plan-name'], null),
+                {
+                  '\\\\s': ' ',
+                  '\\\\:': ';',
+                  '\\\\\\\\': '\\',
+                  '\\r': '\r',
+                  '\\n': '\n',
+                },
+              );
+              const months = _.get(~~message.tags['msg-param-months'], null);
+              const prime = plan.includes('Prime');
+              const userstate = message.tags;
+              if (userstate) {
+                userstate['message-type'] = 'resub';
+              }
+              this.emits(
+                ['resub', 'subanniversary'],
                 [
-                  channel,
-                  username,
-                  months,
-                  msg,
-                  userstate,
-                  { prime, plan, planName },
+                  [
+                    channel,
+                    username,
+                    months,
+                    msg,
+                    userstate,
+                    { prime, plan, planName },
+                  ],
+                  [
+                    channel,
+                    username,
+                    months,
+                    msg,
+                    userstate,
+                    { prime, plan, planName },
+                  ],
                 ],
-                [
-                  channel,
-                  username,
-                  months,
-                  msg,
-                  userstate,
-                  { prime, plan, planName },
-                ],
-              ],
-            );
-          } else if (msgid === 'sub') {
-            // Handle sub
-            const username = message.tags['display-name'] || message.tags.login;
-            const plan = message.tags['msg-param-sub-plan'];
-            const planName = _.replaceAll(
-              _.get(message.tags['msg-param-sub-plan-name'], null),
-              {
-                '\\\\s': ' ',
-                '\\\\:': ';',
-                '\\\\\\\\': '\\',
-                '\\r': '\r',
-                '\\n': '\n',
-              },
-            );
-            const prime = plan.includes('Prime');
-            const userstate = message.tags;
-
-            if (userstate) {
-              userstate['message-type'] = 'sub';
+              );
+              break;
             }
 
-            this.emit(
-              'subscription',
-              channel,
-              username,
-              { prime, plan, planName },
-              msg,
-              userstate,
-            );
-          } else if (msgid === 'subgift') {
-            const username = message.tags['display-name'] || message.tags.login;
-            const recipient =
-              message.tags['msg-param-recipient-display-name'] ||
-              message.tags['msg-param-recipient-user-name'];
-            const plan = message.tags['msg-param-sub-plan'];
-            const planName = _.replaceAll(
-              _.get(message.tags['msg-param-sub-plan-name'], null),
-              {
-                '\\\\s': ' ',
-                '\\\\:': ';',
-                '\\\\\\\\': '\\',
-                '\\r': '\r',
-                '\\n': '\n',
-              },
-            );
-            const userstate = message.tags;
-
-            if (userstate) {
-              userstate['message-type'] = 'subgift';
+            case 'subgift': {
+              const username =
+                message.tags['display-name'] || message.tags.login;
+              const recipient =
+                message.tags['msg-param-recipient-display-name'] ||
+                message.tags['msg-param-recipient-user-name'];
+              const plan = message.tags['msg-param-sub-plan'];
+              const planName = _.replaceAll(
+                _.get(message.tags['msg-param-sub-plan-name'], null),
+                {
+                  '\\\\s': ' ',
+                  '\\\\:': ';',
+                  '\\\\\\\\': '\\',
+                  '\\r': '\r',
+                  '\\n': '\n',
+                },
+              );
+              const userstate = message.tags;
+              if (userstate) {
+                userstate['message-type'] = 'subgift';
+              }
+              this.emit(
+                'subgift',
+                channel,
+                username,
+                recipient,
+                { plan, planName },
+                userstate,
+              );
+              break;
             }
-
-            this.emit(
-              'subgift',
-              channel,
-              username,
-              recipient,
-              { plan, planName },
-              userstate,
-            );
-          } else if (msgid === 'raid') {
-            const raider =
-              message.tags['msg-param-displayName'] ||
-              message.tags['msg-param-login'];
-            const viewers = parseInt(message.tags['msg-param-viewerCount'], 10);
-            const userstate = message.tags;
-
-            if (userstate) {
-              userstate['message-type'] = 'raid';
-            }
-
-            this.emit('raid', { channel, raider, viewers, userstate });
-          } else if (msgid === 'ritual') {
-            const username = message.tags['display-name'] || message.tags.login;
-            const type = message.tags['msg-param-ritual-name'];
-            const userstate = message.tags;
-
-            if (userstate) {
-              userstate['message-type'] = 'ritual';
-            }
-
-            this.emit('ritual', { channel, username, type, userstate });
           }
           break;
-        }
 
         // Channel is now hosting another channel or exited host mode..
         case 'HOSTTARGET':
