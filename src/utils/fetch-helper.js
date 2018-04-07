@@ -26,17 +26,13 @@ export default ({
     return Promise.reject(new Error('A client ID or token is required.'));
   }
 
-  // Construct headers object.
-  const headers = token
-    ? { Authorization: `OAuth ${token}` }
-    : { 'Client-ID': clientId };
-
   // Construct options object.
   const options = {
     ...otherProps,
     method,
     headers: {
-      ...headers,
+      ...(token ? { Authorization: `OAuth ${token}` } : {}),
+      ...(clientId ? { 'Client-ID': clientId } : {}),
       Accept: 'application/vnd.twitchtv.v5+json',
     },
   };
