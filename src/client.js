@@ -131,8 +131,7 @@ client.prototype.handleMessage = function handleMessage(message) {
         // Received PONG from server, return current latency..
         case 'PONG': {
           const currDate = new Date();
-          this.currentLatency =
-            currDate.getTime() - this.latency.getTime();
+          this.currentLatency = currDate.getTime() - this.latency.getTime();
           this.emits(
             ['pong', '_promisePing'],
             [[this.currentLatency], [this.currentLatency]],
@@ -821,11 +820,14 @@ client.prototype.handleMessage = function handleMessage(message) {
 
           // Add the client to the moderators of this room..
           if (message.tags['user-type'] === 'mod') {
-            if (!this.moderators[this.lastJoined]) {
-              this.moderators[this.lastJoined] = [];
-            }
-            if (this.moderators[this.lastJoined].indexOf(this.username) < 0) {
-              this.moderators[this.lastJoined].push(this.username);
+            const [channel] = message.params || [];
+            if (channel) {
+              if (!this.moderators[channel]) {
+                this.moderators[channel] = [];
+              }
+              if (this.moderators[channel].indexOf(this.username) < 0) {
+                this.moderators[channel].push(this.username);
+              }
             }
           }
 
